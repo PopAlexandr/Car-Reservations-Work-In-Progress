@@ -1,9 +1,9 @@
 package service;
 
-import domain.*;
+import domain.Car;
+import domain.Reservation;
 import exception.InvalidParametersException;
 import exception.RepoException;
-
 
 import java.util.ArrayList;
 
@@ -79,4 +79,7 @@ final public class Controller {
     }
 
 
+    public Reservation getReservation(String id) throws RepoException {
+        return appService.get(id);
+    }
 }

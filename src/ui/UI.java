@@ -10,7 +10,12 @@ import domain.Reservation;
 import exception.RepoException;
 import service.Controller;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class UI {
     Controller controller;
@@ -22,11 +27,47 @@ public class UI {
 
     }
     public void go()  {
+
+        System.out.println("AFISARE MASINI FOLOSIND CONSUMER FUNCTIONAL INTERFACE");
+        Consumer<Car> show= System.out::println;
+
+        for(int i=0;i<this.controller.carService.size();i++){
+            try {
+                show.accept(this.controller.getCar(String.valueOf(i)));
+            } catch (RepoException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println("AFISARE REZERVARI FOLOSIND CONSUMER FUNCTIONAL INTERFACE");
+        Consumer<Reservation> show2= System.out::println;
+        ArrayList<Reservation> reservations=this.controller.getReservations();
+        for(int i=0;i<this.controller.appService.size();i++){
+            show2.accept(reservations.get(i));
+        }
+
+        
+        System.out.println("\n AFISARE MASINI MAI VECHI DE 2005");
+        List<Car> predicatecars =this.controller.getCars();
+
+        Predicate<Car> carPredicate=n->  Integer.parseInt( n.getYear()) <2005;
+        predicatecars.stream().filter(carPredicate).forEach(System.out::println);
+
+
+        System.out.println("\n FILTER MASINI MAI NOI DE 2005");
+        List<Car>carFilter=this.controller.getCars();
+        carFilter.stream()
+                .filter(y->Integer.parseInt( y.getYear())>2005)
+                .sorted(Comparator.comparing(Car::getYear))
+                .forEach(System.out::println);
+
+
         while (true) {
             System.out.println("\nOptions:");
             System.out.println("1:CRUD FOR CARS");
             System.out.println("2:CRUD FOR RESERVATIONS");
             System.out.println("3:Exit");
+
+            System.out.println("4:Reports");
             System.out.println("Enter Option:");
             String option=this.console.nextLine();
             switch (option.charAt(0)){
@@ -46,7 +87,11 @@ public class UI {
                 }
                 case'3'-> {System.out.println("BYE BYE");
                     return;}
+                case '4'->{try{new Reports().run();}
+                catch (RepoException e){throw new RuntimeException(e);}}
+
                 default->System.out.println("???");
+
             }
 
         }
@@ -97,6 +142,7 @@ public class UI {
                             System.out.println(e.getMessage());
                         }
                     }
+
                     case '3'->{
                         System.out.print("Enter car ID: ");
                         String id = UI.this.console.nextLine();
@@ -114,6 +160,58 @@ public class UI {
         }
     }
 
+    class Reports{
+        public void run()throws RepoException{
+            while (true){
+                System.out.println("1:the name of the persons who booked a certain car");
+                System.out.println("2:all cars rented by a certain person");
+                System.out.println("3:Cars older than a certain year");
+                System.out.println("4:Cars newer than a certain year");
+                System.out.println("5:all cars that have a certain letter in their name");
+                System.out.println("6:Back");
+                System.out.print("Enter option: ");
+                char option=UI.this.console.nextLine().charAt(0);
+                switch (option){
+                    case '1'->{System.out.println("Enter car ID:");
+                        String idCar=UI.this.console.nextLine();
+                        List<Reservation>reservationFilter=UI.this.controller.getReservations();
+                        reservationFilter.stream().filter(y->y.carID.equals(idCar)).forEach(System.out::println);
+
+                    }
+                    case '2'->{System.out.println("Enter person name:");
+                                String name= UI.this.console.nextLine();
+                                List<Reservation>reservationList=UI.this.controller.getReservations();
+                                reservationList.stream().filter(y->y.name.equals(name)).forEach(reservation -> System.out.println(reservation.getCarID()));
+
+
+                    }
+                    case '3'->{
+                        System.out.println("Enter Year:");
+                        String year=UI.this.console.nextLine();
+                        List<Car>carFilter=UI.this.controller.getCars();
+                        carFilter.stream()
+                                .filter(y->Integer.parseInt( y.getYear())<Integer.parseInt(year))
+                                .sorted(Comparator.comparing(Car::getYear))
+                                .forEach(System.out::println);}
+                    case '4'->{System.out.println("Enter Year:");
+                        String year=UI.this.console.nextLine();
+                        List<Car>carFilter=UI.this.controller.getCars();
+                        carFilter.stream()
+                                .filter(y->Integer.parseInt( y.getYear())>Integer.parseInt(year))
+                                .sorted(Comparator.comparing(Car::getYear))
+                                .forEach(System.out::println);}
+                    case '5'->{System.out.println("Letter:");
+                        String letter=UI.this.console.nextLine();
+                        List<Car>carList=UI.this.controller.getCars();
+                        carList.stream().filter(y->y.getName().contains(letter)).forEach(System.out::println);
+
+                    }
+                    case '6'->{return;}
+
+                }
+            }
+        }
+    }
     class ReservationsUI{
         public void run() throws RepoException {
             while (true){
@@ -121,7 +219,7 @@ public class UI {
                 System.out.println("2: Print all reservations");
                 System.out.println("3: Update reservation");
                 System.out.println("4: Delete reservation");
-                System.out.println("5: Statistics");
+
                 System.out.println("6: Back");
                 System.out.print("Enter option: ");
                 char option=UI.this.console.nextLine().charAt(0);

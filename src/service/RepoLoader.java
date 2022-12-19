@@ -4,6 +4,8 @@ import domain.Reservation;
 import domain.Car;
 import exception.ConfigurationException;
 import repo.IRepository;
+import repo.database.CarRepoDB;
+import repo.database.ReservationRepoDB;
 import repo.file.*;
 import repo.memory.IdentifiableRepoMem;
 
@@ -46,6 +48,11 @@ final public class RepoLoader {
                 case "binary" -> {
                     carsPath = properties.getProperty("CarsBIN");
                     reservationsPath = properties.getProperty("ReservationBIN");
+
+                }
+                case "database"->{
+                    carsPath=properties.getProperty("CarsDB");
+                    reservationsPath=properties.getProperty("ReservationDB");
                 }
                 default -> throw new ConfigurationException("Invalid repository mode");
             }
@@ -69,6 +76,9 @@ final public class RepoLoader {
             case "memory" -> {
                 return new IdentifiableRepoMem<Car>();
             }
+            case "database"->{
+                return new CarRepoDB(carsPath);
+            }
             default -> throw new ConfigurationException("Invalid repository type");
         }
     }
@@ -83,6 +93,9 @@ final public class RepoLoader {
             }
             case "memory" -> {
                 return new IdentifiableRepoMem<Reservation>();
+            }
+            case "database"->{
+                return new ReservationRepoDB(reservationsPath);
             }
             default -> throw new ConfigurationException("Invalid repository type");
         }

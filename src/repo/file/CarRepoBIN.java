@@ -15,7 +15,7 @@ public class CarRepoBIN extends FileRepository<String, Car> {
     public void readFromFile() {
         var tr = new IdentifiableRepoMem<Car>();
         try (var in = new ObjectInputStream(new FileInputStream(this.fileName))) {
-            ArrayList<Car> pans = (ArrayList<Car>) in.readObject();
+            var pans = (ArrayList<Car>) in.readObject();
             for (Car a : pans)
                 tr.add(a.getID(), a);
             this.repo = tr.repo;

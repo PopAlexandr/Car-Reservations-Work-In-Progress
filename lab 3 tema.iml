@@ -25,5 +25,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="junit" level="project" />
+    <orderEntry type="library" exported="" name="sqlite-jdbc-3.40.0.0" level="application" />
   </component>
 </module>
