@@ -10,12 +10,9 @@ import domain.Reservation;
 import exception.RepoException;
 import service.Controller;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class UI {
     Controller controller;
@@ -28,6 +25,7 @@ public class UI {
     }
     public void go()  {
 
+        /*
         System.out.println("AFISARE MASINI FOLOSIND CONSUMER FUNCTIONAL INTERFACE");
         Consumer<Car> show= System.out::println;
 
@@ -60,7 +58,7 @@ public class UI {
                 .sorted(Comparator.comparing(Car::getYear))
                 .forEach(System.out::println);
 
-
+        */
         while (true) {
             System.out.println("\nOptions:");
             System.out.println("1:CRUD FOR CARS");
