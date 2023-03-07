@@ -3,6 +3,7 @@ package domain;
 import java.io.Serializable;
 import java.util.Objects;
 
+
 public class Car implements Identifiable<String>, Serializable {
 
     public static final long serialVersionUID = 1L;
@@ -57,3 +58,4 @@ public class Car implements Identifiable<String>, Serializable {
     }
 
 }
+
